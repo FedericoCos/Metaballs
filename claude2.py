@@ -106,8 +106,6 @@ def main():
     # Pre-allocate grid as numpy array for speed
     grid = np.zeros((grid_height, grid_width), dtype=np.float32)
     
-    # For FPS display
-    font = pygame.font.SysFont('Arial', 20)
     
     # Program state
     running = True
@@ -130,8 +128,6 @@ def main():
                     running = False
                 elif event.key == pygame.K_d:
                     show_debug = not show_debug
-                elif event.key == pygame.K_f:
-                    show_fps = not show_fps
         
         # Update metaballs
         for ball in metaballs:
@@ -140,14 +136,23 @@ def main():
         # Clear the screen
         screen.fill(BACKGROUND)
         
+        update_start_time = 0.0
+        update_tot = 0.0
         # Calculate field values at grid points
         for y in range(grid_height):
             for x in range(grid_width):
+                update_start_time = time.time_ns()
                 grid[y, x] = get_total_field(metaballs, x * SQUARE_SIZE, y * SQUARE_SIZE)
+                update_tot += time.time_ns() - update_start_time
+        
+        
+        draw_start_time = 0.0
+        draw_tot = 0.0
         
         # Process each cell in the grid
         for y in range(grid_height - 1):
             for x in range(grid_width - 1):
+                draw_start_time = time.time_ns()
                 # Cell corner coordinates
                 x_pos = x * SQUARE_SIZE
                 y_pos = y * SQUARE_SIZE
@@ -185,7 +190,7 @@ def main():
                     draw_corner(p_tr, val_tr)
                     draw_corner(p_br, val_br)
                     draw_corner(p_bl, val_bl)
-                
+                    
                 # Find intersection points (where field value crosses threshold)
                 points = []
                 
@@ -224,6 +229,7 @@ def main():
                         # Connect points 0-1 and 2-3
                         pygame.draw.line(screen, METABALL_OUTLINE, points[0], points[1], 2)
                         pygame.draw.line(screen, METABALL_OUTLINE, points[2], points[3], 2)
+                draw_tot += time.time_ns() - draw_start_time
         
         # Debug: show metaball centers and radiuses
         if show_debug:
@@ -233,12 +239,9 @@ def main():
                 # Draw radius circle
                 pygame.draw.circle(screen, WHITE, (int(ball.x), int(ball.y)), int(ball.radius), 1)
         
-        # Show FPS
-        if show_fps:
-            fps = clock.get_fps()
-            fps_text = font.render(f"FPS: {fps:.1f}", True, WHITE)
-            screen.blit(fps_text, (10, 10))
         
+        pygame.display.set_caption(f"Simulation - FPS: {clock.get_fps():.1f} - Update Time: {update_tot / 1000000:.2f}ms - Draw Time: {draw_tot / 1000000:.2f}ms")
+
         pygame.display.flip()
         clock.tick(FPS)
     

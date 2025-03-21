@@ -3,6 +3,7 @@ from pygame.locals import *
 import sys
 import random
 import math
+import time
 
 
 # global variables
@@ -206,12 +207,22 @@ class MarchingSquares:
             for s in self.spheres:
                 s.update(self.clock.get_time() / 1000)
                 # s.draw(self.surface)
+            
+            update_start_time = 0.0
+            update_tot = 0.0
+            
+            draw_start_time = 0.0
+            draw_tot = 0.0
                 
             for square in self.grid:
+                update_start_time = time.time_ns()
                 square.update(self.spheres)
+                update_tot += time.time_ns() - update_start_time
+                draw_start_time = time.time_ns()
                 square.draw(self.surface)
+                draw_tot += time.time_ns() - draw_start_time
             
-            pg.display.set_caption(f"Simulation - FPS: {self.clock.get_fps():.1f}")
+            pg.display.set_caption(f"Simulation - FPS: {self.clock.get_fps():.1f} - Update Time: {update_tot / 1000000:.2f}ms - Draw Time: {draw_tot / 1000000:.2f}ms")
             
         
         

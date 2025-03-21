@@ -13,12 +13,12 @@ FPS = 300
 
 # Sphere variables
 NUM_SPHERES = 15
-MIN_RADIUS = 20
-MAX_RADIUS = 55
+MIN_RADIUS = 15
+MAX_RADIUS = 45
 MAX_VEL = 150
 
 # Voxel variables
-SQUARE_SIZE = 10
+SQUARE_SIZE = 20
 HALF_SQUARE_SIZE = SQUARE_SIZE // 2
 THRESHOLD = 2
 
@@ -190,6 +190,7 @@ class Squares:
                         self.edges[edge2][2] = True 
                     
                     pg.draw.line(surface, GREEN, self.edges[edge][1], self.edges[edge2][1], 3)
+                    
                         
                         
         

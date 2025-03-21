@@ -7,8 +7,8 @@ from collections import defaultdict
 import time
 
 # Global variables
-WIDTH = 600
-HEIGHT = 600
+WIDTH = 1280
+HEIGHT = 720
 FPS = 165
 
 # Sphere variables
